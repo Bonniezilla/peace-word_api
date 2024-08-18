@@ -4,10 +4,7 @@ import com.bonniezilla.aprendendospring.entities.User;
 import com.bonniezilla.aprendendospring.repositories.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,4 +28,11 @@ public class UserController {
 
         return result;
     }
+
+    @PostMapping
+    public User insert(@RequestBody User user) {
+        User result = repository.save(user);
+        return result;
+    }
+
 }
