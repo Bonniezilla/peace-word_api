@@ -5,8 +5,12 @@ import com.bonniezilla.aprendendospring.entities.User;
 import com.bonniezilla.aprendendospring.repositories.UserRepository;
 
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +19,7 @@ import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin
 @RestController
 @RequestMapping(value = "/users")
 public class UserController {
@@ -44,16 +49,43 @@ public class UserController {
         return result;
     }
 
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<Object> updateUser(@PathVariable(value = "id") Long id, @RequestBody @Valid UserDTO userDTO) {
+    @PatchMapping(value = "/{id}")
+    public ResponseEntity<Object> updateUser(@PathVariable(value = "id") Long id, @RequestBody Optional<UserDTO> userDTO) {
+        if(userDTO.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request are empty.");
+        }
+
         Optional<User> dbUser = userRepository.findById(id);
         if (dbUser.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
 
+        if (userDTO.get().email()!=null) {
+            dbUser.get().setEmail(userDTO.get().email());
+        }
+
+        if (userDTO.get().username()!=null) {
+            dbUser.get().setUsername(userDTO.get().username());
+        }
+
+        var userEntity = dbUser.get();
+        userRepository.save(userEntity);
+
+        return ResponseEntity.status(HttpStatus.OK).body(userEntity);
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Object> deleteUser(@PathVariable(value = "id") Long id) {
+        Optional<User> dbUser = userRepository.findById(id);
+
+        if(dbUser.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+
         var userEntity = dbUser.get();
 
-        BeanUtils.copyProperties(userDTO, userEntity);
-        return ResponseEntity.status(HttpStatus.OK).body(userRepository.save(userEntity));
+        userRepository.deleteById(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body("User " + userEntity.getUsername() + " deleted.");
     }
 }
