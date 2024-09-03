@@ -3,7 +3,7 @@ package com.bonniezilla.aprendendospring.entities;
 
 import jakarta.persistence.*;
 
-import java.util.UUID;
+import java.util.Set;
 
 @Entity
 @Table(name = "tb_user")
