@@ -41,6 +41,13 @@ public class PasswordController {
         return result;
     }
 
+    @GetMapping(value = "/{category}")
+    public List<Password> findAllByCategory(@PathVariable(value = "category") String category) {
+        List<Password> result = passwordRepository.findByCategory(category);
+
+        return result;
+    }
+
     @PostMapping
     public ResponseEntity<Object> createPassword(@PathVariable(value = "id") Long userID, @RequestBody @Valid Password passwordReq) {
         Password password = userRepository.findById(userID).map(user -> {

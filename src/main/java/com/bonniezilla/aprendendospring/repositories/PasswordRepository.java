@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface PasswordRepository extends JpaRepository<Password, Long> {
     public List<Password> findByUserId(Long id);
+    public List<Password> findByCategory(String category);
 }
