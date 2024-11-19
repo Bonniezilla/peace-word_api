@@ -4,6 +4,7 @@ import com.bonniezilla.aprendendospring.entities.Password;
 import com.bonniezilla.aprendendospring.repositories.PasswordRepository;
 import com.bonniezilla.aprendendospring.repositories.UserRepository;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,11 +49,22 @@ public class PasswordController {
         return result;
     }
 
-    @GetMapping(value = "/{category}")
+    @GetMapping(value = "/byCategory/{category}")
     public List<Password> findAllByCategory(@PathVariable(value = "category") String category) {
         List<Password> result = passwordRepository.findByCategory(category);
 
         return result;
+    }
+
+    @GetMapping(value = "/byId/{passwordId}")
+    public ResponseEntity<Object> findById(@PathVariable(value = "passwordId") Long passwordID) {
+        Optional<Password> result = passwordRepository.findById(passwordID);
+
+        if(result.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new PasswordDoesNotExistsException(passwordID));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     @PostMapping
@@ -66,11 +78,11 @@ public class PasswordController {
     }
 
     @DeleteMapping(value = "/{passwordID}")
-    public Object deletePassword(@PathVariable(value = "passwordID") Long passwordID) {
+    public ResponseEntity<Object> deletePassword(@PathVariable(value = "passwordID") Long passwordID) {
         Optional<Password> password = passwordRepository.findById(passwordID);
 
         if(password.isEmpty()) {
-            return new PasswordDoesNotExistsException(passwordID);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new PasswordDoesNotExistsException(passwordID));
         }
 
         passwordRepository.deleteById(passwordID);
