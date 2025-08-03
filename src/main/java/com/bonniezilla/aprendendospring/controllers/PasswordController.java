@@ -4,7 +4,7 @@ import com.bonniezilla.aprendendospring.entities.Password;
 import com.bonniezilla.aprendendospring.repositories.PasswordRepository;
 import com.bonniezilla.aprendendospring.repositories.UserRepository;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -69,12 +69,38 @@ public class PasswordController {
 
     @PostMapping
     public ResponseEntity<Object> createPassword(@PathVariable(value = "id") Long userID, @RequestBody @Valid Password passwordReq) {
-        Password password = userRepository.findById(userID).map(user -> {
+        userRepository.findById(userID).map(user -> {
             passwordReq.setUser(user);
             return passwordRepository.save(passwordReq);
         }).orElseThrow(() -> new UserDoesNotExistsException(userID));
 
         return ResponseEntity.status(HttpStatus.OK).body("Password saved.");
+    }
+
+    @PatchMapping(value = "/byId/{passwordID}")
+    public ResponseEntity<Object> updatePassword(@PathVariable(value = "passwordID") Long passwordID, @RequestBody Optional<Password> passwordReq) {
+        if(passwordReq.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request is empty.");
+        }
+
+        Optional<Password> dbPassword = passwordRepository.findById(passwordID);
+        if (dbPassword.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new PasswordDoesNotExistsException(passwordID));
+        }
+
+        Password passwordEntity = dbPassword.get();
+        if (passwordReq.get().getPassword() != null) {
+            passwordEntity.setPassword(passwordReq.get().getPassword());
+        }
+        if (passwordReq.get().getCategory() != null) {
+            passwordEntity.setCategory(passwordReq.get().getCategory());
+        }
+        if (passwordReq.get().getUrl() != null) {
+            passwordEntity.setUrl(passwordReq.get().getUrl());
+        }
+
+        passwordRepository.save(passwordEntity);
+        return ResponseEntity.status(HttpStatus.OK).body("Password updated.");
     }
 
     @DeleteMapping(value = "/{passwordID}")
