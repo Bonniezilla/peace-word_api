@@ -10,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @CrossOrigin
@@ -74,7 +76,10 @@ public class PasswordController {
             return passwordRepository.save(passwordReq);
         }).orElseThrow(() -> new UserDoesNotExistsException(userID));
 
-        return ResponseEntity.status(HttpStatus.OK).body("Password saved.");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Password saved.");
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PatchMapping(value = "/byId/{passwordID}")
