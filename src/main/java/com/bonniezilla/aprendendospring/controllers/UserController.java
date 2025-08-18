@@ -1,86 +1,84 @@
 package com.bonniezilla.aprendendospring.controllers;
 
-import com.bonniezilla.aprendendospring.dtos.UserDTO;
+import com.bonniezilla.aprendendospring.dtos.UserRequestDTO;
+import com.bonniezilla.aprendendospring.dtos.UserResponseDTO;
 import com.bonniezilla.aprendendospring.entities.User;
-import com.bonniezilla.aprendendospring.repositories.UserRepository;
 
+import com.bonniezilla.aprendendospring.services.UserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/users")
 public class UserController {
 
-    @Autowired
-    private UserRepository userRepository;
+    // Declaring userService
+    private final UserService userService;
 
-    @PostMapping
-    public ResponseEntity<User> saveUser(@RequestBody @Valid UserDTO userDTO) {
-        var userEntity = new User();
-        BeanUtils.copyProperties(userDTO, userEntity);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(userRepository.save(userEntity));
+    // Getting the value to userService
+    private UserController (UserService userService) {
+        this.userService = userService;
     }
 
-    @GetMapping
-    public List<User> findAll() {
-        List<User> result = userRepository.findAll();
 
-        return result;
+    // Create user Method
+    @PostMapping
+    public ResponseEntity<UserResponseDTO> saveUser(@RequestBody @Valid UserRequestDTO userDTO) {
+         User savedUser = userService.createUser(userDTO);
+
+         UserResponseDTO response = new UserResponseDTO(
+                 savedUser.getId(),
+                 savedUser.getUsername(),
+                 savedUser.getEmail()
+         );
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    // Get all users method
+    @GetMapping
+    public ResponseEntity<List<User>> findAll() {
+        // Returning list of all users
+        return ResponseEntity.ok(userService.findAll());
     }
 
     @GetMapping(value = "/{id}")
-    public User findById(@PathVariable Long id){
-        User result = userRepository.findById(id).get();
+    public ResponseEntity<UserResponseDTO> findById(@PathVariable Long id){
+        // Returning one user or throwing error
 
-        return result;
+        User user = userService.findById(id);
+
+        UserResponseDTO response = new UserResponseDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail()
+        );
+
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping(value = "/{id}")
-    public ResponseEntity<Object> updateUser(@PathVariable(value = "id") Long id, @RequestBody Optional<UserDTO> userDTO) {
-        if(userDTO.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request are empty.");
-        }
+    public ResponseEntity<Object> updateUser(@PathVariable(value = "id") Long id, @RequestBody UserRequestDTO userDTO) {
+        User updatedUser = userService.updateUser(id, userDTO);
 
-        Optional<User> dbUser = userRepository.findById(id);
-        if (dbUser.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
-        }
+        UserResponseDTO response = new UserResponseDTO(
+            updatedUser.getId(),
+            updatedUser.getUsername(),
+            updatedUser.getEmail()
+        );
 
-        if (userDTO.get().email()!=null) {
-            dbUser.get().setEmail(userDTO.get().email());
-        }
-
-        if (userDTO.get().username()!=null) {
-            dbUser.get().setUsername(userDTO.get().username());
-        }
-
-        var userEntity = dbUser.get();
-        userRepository.save(userEntity);
-
-        return ResponseEntity.status(HttpStatus.OK).body(userEntity);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Object> deleteUser(@PathVariable(value = "id") Long id) {
-        Optional<User> dbUser = userRepository.findById(id);
+        UserResponseDTO response = userService.deleteUser(id);
 
-        if(dbUser.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
-        }
-
-        var userEntity = dbUser.get();
-
-        userRepository.deleteById(id);
-
-        return ResponseEntity.status(HttpStatus.OK).body("User " + userEntity.getUsername() + " deleted.");
+        return ResponseEntity.status(HttpStatus.OK).body("User " + response.username() + " deleted. ID: " + response.id());
     }
 }
