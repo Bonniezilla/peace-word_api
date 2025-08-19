@@ -7,7 +7,6 @@ import java.util.Set;
 
 @Entity
 @Table(name = "tb_user")
-
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,5 +36,21 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    // Default constructor
+    public User(){}
+
+    // Constructor with args to for creating users
+    public User(String email, String username){
+        this.email = email;
+        this.username = username;
+    }
+
+    // Constructor to create user with id (ONLY FOR TESTS)
+    protected User(Long id, String email, String username) {
+        this.id = id;
+        this.email = email;
+        this.username = username;
     }
 }
