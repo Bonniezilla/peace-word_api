@@ -1,6 +1,7 @@
 package com.bonniezilla.aprendendospring.entities;
 
 
+import com.bonniezilla.aprendendospring.dtos.UserRequestDTO;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -41,7 +42,12 @@ public class User {
     // Default constructor
     public User(){}
 
-    // Constructor with args to for creating users
+    public User(UserRequestDTO user){
+        this.email = user.email();
+        this.username = user.username();
+    }
+
+    // Constructor with args for creating users
     public User(String email, String username){
         this.email = email;
         this.username = username;

@@ -1,5 +1,7 @@
 package com.bonniezilla.aprendendospring.services;
 
+import com.bonniezilla.aprendendospring.dtos.UserRequestDTO;
+import com.bonniezilla.aprendendospring.dtos.UserResponseDTO;
 import com.bonniezilla.aprendendospring.entities.User;
 import com.bonniezilla.aprendendospring.entities.UserTestFactory;
 import com.bonniezilla.aprendendospring.repositories.UserRepository;
@@ -12,6 +14,9 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class UserServiceTest {
     @Mock
@@ -42,16 +47,32 @@ class UserServiceTest {
 
         User response = userService.findById(999L);
 
-        Assertions.assertEquals(user, response);
-        Assertions.assertEquals(user.getId(), response.getId());
-        Assertions.assertEquals(user.getEmail(), response.getEmail());
-        Assertions.assertEquals(user.getUsername(), response.getUsername());
+        assertEquals(user, response);
+        assertEquals(user.getId(), response.getId());
+        assertEquals(user.getEmail(), response.getEmail());
+        assertEquals(user.getUsername(), response.getUsername());
 
         Mockito.verify(userRepository).findById(999L);
     }
 
     @Test
     void updateUser() {
+        User user = UserTestFactory.create(999L, "test@user.com", "UserTest");
+
+        Mockito.when(userRepository.findById(999L)).thenReturn(Optional.of(user));
+
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenAnswer((invocation -> invocation.getArgument(0)));
+
+        UserRequestDTO requestDTO = new UserRequestDTO("test@updated.com", "Updated test");
+
+        UserResponseDTO result = userService.updateUser(999L, requestDTO);
+
+        assertNotNull(result);
+        assertEquals(999L, result.id());
+        assertEquals(requestDTO.username(), result.username());
+        assertEquals(requestDTO.email(), result.email());
+
+        Mockito.verify(userRepository).save(Mockito.any(User.class));
     }
 
     @Test

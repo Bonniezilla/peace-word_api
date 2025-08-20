@@ -29,21 +29,16 @@ public class UserController {
     // Create user Method
     @PostMapping
     public ResponseEntity<UserResponseDTO> saveUser(@RequestBody @Valid UserRequestDTO userDTO) {
-         User savedUser = userService.createUser(userDTO);
+         UserResponseDTO savedUser = userService.createUser(userDTO);
 
-         UserResponseDTO response = new UserResponseDTO(
-                 savedUser.getId(),
-                 savedUser.getUsername(),
-                 savedUser.getEmail()
-         );
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
     // Get all users method
     @GetMapping
     public ResponseEntity<List<User>> findAll() {
         // Returning list of all users
+
         return ResponseEntity.ok(userService.findAll());
     }
 
@@ -53,6 +48,7 @@ public class UserController {
 
         User user = userService.findById(id);
 
+        // Instancing the user founded by id to response
         UserResponseDTO response = new UserResponseDTO(
                 user.getId(),
                 user.getUsername(),
@@ -64,20 +60,21 @@ public class UserController {
 
     @PatchMapping(value = "/{id}")
     public ResponseEntity<Object> updateUser(@PathVariable(value = "id") Long id, @RequestBody UserRequestDTO userDTO) {
-        User updatedUser = userService.updateUser(id, userDTO);
+        UserResponseDTO updatedUser = userService.updateUser(id, userDTO);
 
-        UserResponseDTO response = new UserResponseDTO(
-            updatedUser.getId(),
-            updatedUser.getUsername(),
-            updatedUser.getEmail()
-        );
-
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Object> deleteUser(@PathVariable(value = "id") Long id) {
-        UserResponseDTO response = userService.deleteUser(id);
+        // Instancing the deleted user
+        User deletedUser = userService.deleteUser(id);
+
+        UserResponseDTO response = new UserResponseDTO(
+                deletedUser.getId(),
+                deletedUser.getEmail(),
+                deletedUser.getUsername()
+        );
 
         return ResponseEntity.status(HttpStatus.OK).body("User " + response.username() + " deleted. ID: " + response.id());
     }

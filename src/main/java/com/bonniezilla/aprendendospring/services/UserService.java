@@ -12,29 +12,36 @@ import java.util.List;
 
 @Service
 public class UserService {
+    // Instancing userRepository
     private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public User createUser(@Valid UserRequestDTO data) {
-        User newUser = new User(data.email(), data.username());
+    // Create user function
+    public UserResponseDTO createUser(@Valid UserRequestDTO data) {
+        User newUserData = new User(data);
 
-        return userRepository.save(newUser);
+        User newUser = userRepository.save(newUserData);
+
+        return UserResponseDTO.fromUser(newUser);
     }
 
+    // Find all users function
     public List<User> findAll() {
         return userRepository.findAll();
     }
 
+    // Find a user by his id
     public User findById(Long id) {
         // Return user or throw exception
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found!"));
     }
 
-    public User updateUser(Long id, @Valid UserRequestDTO data) {
+    // Update user data by id
+    public UserResponseDTO updateUser(Long id, @Valid UserRequestDTO data) {
         User dbUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not find"));
 
@@ -46,21 +53,17 @@ public class UserService {
             dbUser.setUsername(data.username());
         }
 
-        return userRepository.save(dbUser);
+        userRepository.save(dbUser);
+
+        return UserResponseDTO.fromUser(dbUser);
     }
 
-    public UserResponseDTO deleteUser(Long id) {
+    // Delete user by id
+    public User deleteUser(Long id) {
         User dbUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
-        UserResponseDTO username = new UserResponseDTO(
-                dbUser.getId(),
-                dbUser.getUsername(),
-                dbUser.getEmail()
-        );
-
         userRepository.delete(dbUser);
 
-        return username;
+        return dbUser;
     }
 }
