@@ -10,10 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @CrossOrigin
 @RestController
@@ -29,7 +26,7 @@ public class PasswordController {
     public class UserDoesNotExistsException extends RuntimeException {
         public UserDoesNotExistsException() {}
 
-        public UserDoesNotExistsException(Long id) {
+        public UserDoesNotExistsException(UUID id) {
             super("User with id " + String.valueOf(id) + " doesn't exists.");
         }
     }
@@ -38,14 +35,14 @@ public class PasswordController {
     public class PasswordDoesNotExistsException extends RuntimeException {
         public PasswordDoesNotExistsException() {}
 
-        public PasswordDoesNotExistsException(Long id) {
+        public PasswordDoesNotExistsException(UUID id) {
             super("Password with id " + String.valueOf(id) + " doesn't exists.");
         }
     }
 
 
     @GetMapping
-    public List<Password> findALl(@PathVariable(value = "id") Long userId) {
+    public List<Password> findALl(@PathVariable(value = "id") UUID userId) {
         List<Password> result = passwordRepository.findByUserId(userId);
 
         return result;
@@ -59,7 +56,7 @@ public class PasswordController {
     }
 
     @GetMapping(value = "/byId/{passwordId}")
-    public ResponseEntity<Object> findById(@PathVariable(value = "passwordId") Long passwordID) {
+    public ResponseEntity<Object> findById(@PathVariable(value = "passwordId") UUID passwordID) {
         Optional<Password> result = passwordRepository.findById(passwordID);
 
         if(result.isEmpty()) {
@@ -70,7 +67,7 @@ public class PasswordController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createPassword(@PathVariable(value = "id") Long userID, @RequestBody @Valid Password passwordReq) {
+    public ResponseEntity<Object> createPassword(@PathVariable(value = "id") UUID userID, @RequestBody @Valid Password passwordReq) {
         userRepository.findById(userID).map(user -> {
             passwordReq.setUser(user);
             return passwordRepository.save(passwordReq);
@@ -83,7 +80,7 @@ public class PasswordController {
     }
 
     @PatchMapping(value = "/byId/{passwordID}")
-    public ResponseEntity<Object> updatePassword(@PathVariable(value = "passwordID") Long passwordID, @RequestBody Optional<Password> passwordReq) {
+    public ResponseEntity<Object> updatePassword(@PathVariable(value = "passwordID") UUID passwordID, @RequestBody Optional<Password> passwordReq) {
         if(passwordReq.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request is empty.");
         }
@@ -109,7 +106,7 @@ public class PasswordController {
     }
 
     @DeleteMapping(value = "/{passwordID}")
-    public ResponseEntity<Object> deletePassword(@PathVariable(value = "passwordID") Long passwordID) {
+    public ResponseEntity<Object> deletePassword(@PathVariable(value = "passwordID") UUID passwordID) {
         Optional<Password> password = passwordRepository.findById(passwordID);
 
         if(password.isEmpty()) {

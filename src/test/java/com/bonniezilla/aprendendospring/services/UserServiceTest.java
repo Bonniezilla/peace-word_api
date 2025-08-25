@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -41,31 +42,31 @@ class UserServiceTest {
 
     @Test
     void findById() {
-        User user = UserTestFactory.create(999L, "test@user.com", "UserTest");
+        User user = UserTestFactory.create(UUID.fromString("test"), "test@user.com", "UserTest");
 
-        Mockito.when(userRepository.findById(999L)).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findById(UUID.fromString("test"))).thenReturn(Optional.of(user));
 
-        User response = userService.findById(999L);
+        User response = userService.findById(UUID.fromString("test"));
 
         assertEquals(user, response);
         assertEquals(user.getId(), response.getId());
         assertEquals(user.getEmail(), response.getEmail());
         assertEquals(user.getUsername(), response.getUsername());
 
-        Mockito.verify(userRepository).findById(999L);
+        Mockito.verify(userRepository).findById(UUID.fromString("test"));
     }
 
     @Test
     void updateUser() {
-        User user = UserTestFactory.create(999L, "test@user.com", "UserTest");
+        User user = UserTestFactory.create(UUID.fromString("test"), "test@user.com", "UserTest");
 
-        Mockito.when(userRepository.findById(999L)).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findById(UUID.fromString("test"))).thenReturn(Optional.of(user));
 
         Mockito.when(userRepository.save(Mockito.any(User.class))).thenAnswer((invocation -> invocation.getArgument(0)));
 
         UserRequestDTO requestDTO = new UserRequestDTO("test@updated.com", "Updated test");
 
-        UserResponseDTO result = userService.updateUser(999L, requestDTO);
+        UserResponseDTO result = userService.updateUser(UUID.fromString("test"), requestDTO);
 
         assertNotNull(result);
         assertEquals(999L, result.id());

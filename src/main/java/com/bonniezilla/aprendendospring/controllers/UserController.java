@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @CrossOrigin
 @RestController
@@ -44,7 +45,7 @@ public class UserController {
 
     // Get one user by id method
     @GetMapping(value = "/{id}")
-    public ResponseEntity<UserResponseDTO> findById(@PathVariable Long id){
+    public ResponseEntity<UserResponseDTO> findById(@PathVariable UUID id){
         // Returning one user
         User user = userService.findById(id);
 
@@ -56,7 +57,7 @@ public class UserController {
 
     // Update one user by id method
     @PatchMapping(value = "/{id}")
-    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable(value = "id") Long id, @RequestBody UserRequestDTO userDTO) {
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable(value = "id") UUID id, @RequestBody UserRequestDTO userDTO) {
         UserResponseDTO updatedUser = userService.updateUser(id, userDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
@@ -64,7 +65,7 @@ public class UserController {
 
     // Delete one user by id method
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Object> deleteUser(@PathVariable(value = "id") Long id) {
+    public ResponseEntity<Object> deleteUser(@PathVariable(value = "id") UUID id) {
         // Deleting and instantiating the deleted user
         User deletedUser = userService.deleteUser(id);
 

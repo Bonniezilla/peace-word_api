@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -34,14 +35,14 @@ public class UserService {
     }
 
     // Find a user by his id
-    public User findById(Long id) {
+    public User findById(UUID id) {
         // Return user or throw exception
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found!"));
     }
 
     // Update user data by id
-    public UserResponseDTO updateUser(Long id, @Valid UserRequestDTO data) {
+    public UserResponseDTO updateUser(UUID id, @Valid UserRequestDTO data) {
         User dbUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not find"));
 
@@ -59,7 +60,7 @@ public class UserService {
     }
 
     // Delete user by id
-    public User deleteUser(Long id) {
+    public User deleteUser(UUID id) {
         User dbUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         userRepository.delete(dbUser);

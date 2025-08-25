@@ -5,13 +5,14 @@ import com.bonniezilla.aprendendospring.dtos.UserRequestDTO;
 import jakarta.persistence.*;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "tb_user")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(unique = true)
     private String email;
@@ -19,7 +20,7 @@ public class User {
     @Column(unique = true)
     private String username;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
@@ -54,7 +55,7 @@ public class User {
     }
 
     // Constructor to create user with id (ONLY FOR TESTS)
-    protected User(Long id, String email, String username) {
+    protected User(UUID id, String email, String username) {
         this.id = id;
         this.email = email;
         this.username = username;
