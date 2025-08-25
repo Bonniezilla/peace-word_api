@@ -26,7 +26,7 @@ public class UserController {
     }
 
 
-    // Create user Method
+    // Create user method
     @PostMapping
     public ResponseEntity<UserResponseDTO> saveUser(@RequestBody @Valid UserRequestDTO userDTO) {
          UserResponseDTO savedUser = userService.createUser(userDTO);
@@ -42,22 +42,19 @@ public class UserController {
         return ResponseEntity.ok(userService.findAll());
     }
 
+    // Get one user by id method
     @GetMapping(value = "/{id}")
     public ResponseEntity<UserResponseDTO> findById(@PathVariable Long id){
-        // Returning one user or throwing error
-''
+        // Returning one user
         User user = userService.findById(id);
 
-        // Instancing the user founded by id to response
-        UserResponseDTO response = new UserResponseDTO(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail()
-        );
+        // Instantiating UserResponseDTO
+        UserResponseDTO response = UserResponseDTO.fromUser(user);
 
         return ResponseEntity.ok(response);
     }
 
+    // Update one user by id method
     @PatchMapping(value = "/{id}")
     public ResponseEntity<UserResponseDTO> updateUser(@PathVariable(value = "id") Long id, @RequestBody UserRequestDTO userDTO) {
         UserResponseDTO updatedUser = userService.updateUser(id, userDTO);
@@ -65,16 +62,14 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 
+    // Delete one user by id method
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Object> deleteUser(@PathVariable(value = "id") Long id) {
-        // Instancing the deleted user
+        // Deleting and instantiating the deleted user
         User deletedUser = userService.deleteUser(id);
 
-        UserResponseDTO response = new UserResponseDTO(
-                deletedUser.getId(),
-                deletedUser.getEmail(),
-                deletedUser.getUsername()
-        );
+        // Instantiating UserResponseDTO
+        UserResponseDTO response = UserResponseDTO.fromUser(deletedUser);
 
         return ResponseEntity.status(HttpStatus.OK).body("User " + response.username() + " deleted. ID: " + response.id());
     }
