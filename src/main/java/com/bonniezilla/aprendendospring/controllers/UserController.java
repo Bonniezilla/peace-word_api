@@ -45,7 +45,7 @@ public class UserController {
     @GetMapping(value = "/{id}")
     public ResponseEntity<UserResponseDTO> findById(@PathVariable Long id){
         // Returning one user or throwing error
-
+''
         User user = userService.findById(id);
 
         // Instancing the user founded by id to response
@@ -59,7 +59,7 @@ public class UserController {
     }
 
     @PatchMapping(value = "/{id}")
-    public ResponseEntity<Object> updateUser(@PathVariable(value = "id") Long id, @RequestBody UserRequestDTO userDTO) {
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable(value = "id") Long id, @RequestBody UserRequestDTO userDTO) {
         UserResponseDTO updatedUser = userService.updateUser(id, userDTO);
 
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
