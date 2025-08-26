@@ -1,10 +1,9 @@
 package com.bonniezilla.aprendendospring.entities;
 
 
-import com.bonniezilla.aprendendospring.dtos.UserRequestDTO;
+import com.bonniezilla.aprendendospring.dtos.UserLoginDTO;
 import jakarta.persistence.*;
 
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -14,11 +13,18 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(unique = true)
+    @Column(nullable = false)
+    private String password;
+
+    @Column(unique = true, nullable = false)
     private String username;
+
+    @Enumerated(EnumType.STRING) // Save as text in DB
+    @Column(nullable = false)
+    private Role role;
 
     public UUID getId() {
         return id;
@@ -40,12 +46,20 @@ public class User {
         this.email = email;
     }
 
+    public String getPassword() { return password; }
+
+    public void setPassword(String password) { this.password = password; }
+
+    public Role getRole() { return role; }
+
+    public void setRole(Role role ) {this.role = role;}
+
     // Default constructor
     public User(){}
 
-    public User(UserRequestDTO user){
+    public User(UserLoginDTO user){
         this.email = user.email();
-        this.username = user.username();
+        this.username = user.password();
     }
 
     // Constructor with args for creating users
