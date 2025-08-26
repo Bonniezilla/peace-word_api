@@ -12,4 +12,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleResourceAlreadyExists(ResourceAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
+
+    // Return 409 conflict with an exception message
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
 }

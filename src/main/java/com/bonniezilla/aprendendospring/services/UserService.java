@@ -7,6 +7,7 @@ import com.bonniezilla.aprendendospring.entities.Role;
 import com.bonniezilla.aprendendospring.entities.User;
 import com.bonniezilla.aprendendospring.exceptions.ResourceAlreadyExistsException;
 import com.bonniezilla.aprendendospring.repositories.UserRepository;
+import com.bonniezilla.aprendendospring.utils.PasswordValidator;
 import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,8 @@ public class UserService {
 
     // Create user function
     public User createUser(@Valid UserRegisterDTO data) {
+        PasswordValidator.validatePassword(data.password());
+
         // Encoding raw password
         String encodedPassword = passwordEncoder.encode(data.password());
 
