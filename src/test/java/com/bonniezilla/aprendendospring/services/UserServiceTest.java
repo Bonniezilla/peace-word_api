@@ -40,7 +40,7 @@ class UserServiceTest {
 
     @Test
     void createUserSuccessCase() {
-        UserRegisterDTO dto = new UserRegisterDTO("username", "test@example", "password");
+        UserRegisterDTO dto = new UserRegisterDTO("username", "test@example", "Password1@");
         String encodedPassword = "encodedPassword";
 
         when(userRepository.existsByUsername(dto.username())).thenReturn(false);
@@ -59,7 +59,7 @@ class UserServiceTest {
 
     @Test
     void createUserFailByExistentEmailCase() {
-        UserRegisterDTO dto = new UserRegisterDTO("username", "test@example", "password");
+        UserRegisterDTO dto = new UserRegisterDTO("username", "test@example", "Password1@");
         String encodedPassword = "encodedPassword";
 
         when(userRepository.existsByUsername(dto.username())).thenReturn(false);
@@ -78,7 +78,7 @@ class UserServiceTest {
 
     @Test
     void createUserFailByExistentUsernameCase() {
-        UserRegisterDTO dto = new UserRegisterDTO("username", "test@example", "password");
+        UserRegisterDTO dto = new UserRegisterDTO("username", "test@example", "Password1@");
         String encodedPassword = "encodedPassword";
 
         when(userRepository.existsByUsername(dto.username())).thenReturn(true);
