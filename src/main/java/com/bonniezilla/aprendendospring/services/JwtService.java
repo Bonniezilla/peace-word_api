@@ -4,14 +4,9 @@ import com.bonniezilla.aprendendospring.entities.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.security.Key;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -19,17 +14,11 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
-
-    public JwtService() {}
-
-    public JwtService(String privateKeyBase64, String publicKeyBase64, long expiration) {
-        this.privateKeyBase64 = privateKeyBase64;
-        this.publicKeyBase64 = publicKeyBase64;
-        this.expiration = expiration;
-    }
 
     @Value("${JWT_PRIVATE_KEY}")
     private String privateKeyBase64;
@@ -39,6 +28,14 @@ public class JwtService {
 
     @Value("${JWT_EXPIRATION}")
     private long expiration; // in milliseconds
+
+    public JwtService() {}
+
+    public JwtService(String privateKeyBase64, String publicKeyBase64, long expiration) {
+        this.privateKeyBase64 = privateKeyBase64;
+        this.publicKeyBase64 = publicKeyBase64;
+        this.expiration = expiration;
+    }
 
     private PrivateKey privateKey;
     private PublicKey publicKey;
@@ -61,9 +58,14 @@ public class JwtService {
     public String generateToken(User user) throws Exception {
         loadKeys();
 
+        var roles = user.getAuthorities()
+                .stream()
+                .map(auth -> auth.getAuthority())
+                .collect(Collectors.toList());
+
         return Jwts.builder()
                 .setSubject(user.getUsername())
-                .claim("role", user.getRole())
+                .claim("roles", roles)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(privateKey, SignatureAlgorithm.ES256)
@@ -96,7 +98,7 @@ public class JwtService {
         return claims.getSubject();
     }
 
-    public String getRoleFromToken(String token) throws Exception {
+    public List getRolesFromToken(String token) throws Exception {
         loadKeys();
 
         Claims claims = Jwts.parserBuilder()
@@ -105,7 +107,7 @@ public class JwtService {
                 .parseClaimsJws(token)
                 .getBody();
 
-        return claims.get("role", String.class);
+        return claims.get("roles", List.class);
     }
 
 }

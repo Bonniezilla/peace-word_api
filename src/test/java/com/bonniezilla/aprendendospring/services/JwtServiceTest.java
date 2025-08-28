@@ -5,6 +5,8 @@ import com.bonniezilla.aprendendospring.entities.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -35,13 +37,13 @@ public class JwtServiceTest {
         assertTrue(jwtService.validateToken(token));
 
         String username = jwtService.getUsernameFromToken(token);
-        String role = jwtService.getRoleFromToken(token);
+        List<String> roles = jwtService.getRolesFromToken(token);
 
         assertNotNull(username);
-        assertNotNull(role);
+        assertNotNull(roles);
 
         assertEquals("usertest", username);
-        assertEquals("ROLE_ADMIN", role);
+        assertTrue(roles.contains("ROLE_ADMIN"));
 
         String[] parts = token.split("\\.");
         String tamperedToken = parts[0] + "." + parts[1] + "invalidSignature";

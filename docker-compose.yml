@@ -6,6 +6,7 @@ services:
       context: .
     container_name: aprendendospring_api
     environment:
+      env_file: .env.dev
       SPRING_PROFILES_ACTIVE: docker
       JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY}
       JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}

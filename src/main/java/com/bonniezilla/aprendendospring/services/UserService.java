@@ -57,12 +57,12 @@ public class UserService {
 //        return userRepository.findAll();
 //    }
 //
-//    // Find a user by his id
-//    public User findById(UUID id) {
-//        // Return user or throw exception
-//        return userRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("User not found!"));
-//    }
+    // Find a user by his id
+    public User findByEmail(String email) {
+        // Return user or throw exception
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found by email!"));
+    }
 //
 //    // Update user data by id
 //    public UserRegisterDTO updateUser(UUID id, @Valid UserLoginDTO data) {
