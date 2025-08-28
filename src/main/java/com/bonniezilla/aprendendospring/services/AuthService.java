@@ -28,6 +28,6 @@ public class AuthService {
 
         String token = jwtService.generateToken(user);
 
-        return new AuthResponseDTO(token, user.getEmail(), user.getUsername());
+        return new AuthResponseDTO(token);
     }
 }

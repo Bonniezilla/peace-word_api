@@ -1,7 +1,6 @@
 package com.bonniezilla.aprendendospring.services;
 
 
-import com.bonniezilla.aprendendospring.dtos.UserLoginDTO;
 import com.bonniezilla.aprendendospring.dtos.UserRegisterDTO;
 import com.bonniezilla.aprendendospring.entities.Role;
 import com.bonniezilla.aprendendospring.entities.User;
@@ -11,8 +10,6 @@ import com.bonniezilla.aprendendospring.utils.PasswordValidator;
 import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class UserService {

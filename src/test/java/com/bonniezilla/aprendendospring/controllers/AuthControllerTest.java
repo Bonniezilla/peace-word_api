@@ -36,7 +36,7 @@ class AuthControllerTest {
     void loginSuccessCase() throws Exception {
         // Arrange
         AuthRequestDTO requestDTO = new AuthRequestDTO("test@email", "StrongPasswords123@");
-        AuthResponseDTO responseDTO = new AuthResponseDTO("fake-jwt-token", "test@email", "user-test");
+        AuthResponseDTO responseDTO = new AuthResponseDTO("fake-jwt-token");
 
         // Mocking the AuthService
         Mockito.when(authService.login(requestDTO)).thenReturn(responseDTO);
@@ -45,8 +45,6 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value(responseDTO.token()))
-                .andExpect(jsonPath("$.email").value(responseDTO.email()))
-                .andExpect(jsonPath("$.username").value(responseDTO.username()));
+                .andExpect(jsonPath("$.token").value(responseDTO.token()));
     }
 }

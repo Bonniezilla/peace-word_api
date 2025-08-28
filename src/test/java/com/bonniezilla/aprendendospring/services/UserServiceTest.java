@@ -1,23 +1,15 @@
 package com.bonniezilla.aprendendospring.services;
 
-import com.bonniezilla.aprendendospring.dtos.UserLoginDTO;
 import com.bonniezilla.aprendendospring.dtos.UserRegisterDTO;
 import com.bonniezilla.aprendendospring.entities.User;
-import com.bonniezilla.aprendendospring.entities.UserTestFactory;
 import com.bonniezilla.aprendendospring.exceptions.ResourceAlreadyExistsException;
 import com.bonniezilla.aprendendospring.repositories.UserRepository;
-import jakarta.validation.ConstraintDeclarationException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;

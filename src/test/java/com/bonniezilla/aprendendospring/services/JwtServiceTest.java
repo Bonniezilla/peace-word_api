@@ -36,13 +36,10 @@ public class JwtServiceTest {
         assertNotNull(token);
         assertTrue(jwtService.validateToken(token));
 
-        String username = jwtService.getUsernameFromToken(token);
-        List<String> roles = jwtService.getRolesFromToken(token);
+        List roles = jwtService.getRolesFromToken(token);
 
-        assertNotNull(username);
         assertNotNull(roles);
 
-        assertEquals("usertest", username);
         assertTrue(roles.contains("ROLE_ADMIN"));
 
         String[] parts = token.split("\\.");

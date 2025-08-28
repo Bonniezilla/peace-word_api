@@ -86,18 +86,6 @@ public class JwtService {
         }
     }
 
-    public String getUsernameFromToken(String token) throws Exception {
-        loadKeys();
-
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(publicKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-
-        return claims.getSubject();
-    }
-
     public List getRolesFromToken(String token) throws Exception {
         loadKeys();
 

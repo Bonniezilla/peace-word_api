@@ -58,8 +58,6 @@ public class AuthServiceTest {
         // Assert
         assertNotNull(response);
         assertEquals("fake-jwt-token", response.token());
-        assertEquals("test@user.com", response.email());
-        assertEquals("user-test", response.username());
 
         verify(authenticationManager, times(1))
                 .authenticate(any(UsernamePasswordAuthenticationToken.class));

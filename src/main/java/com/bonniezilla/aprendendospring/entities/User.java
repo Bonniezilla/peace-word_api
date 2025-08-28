@@ -1,7 +1,6 @@
 package com.bonniezilla.aprendendospring.entities;
 
 
-import com.bonniezilla.aprendendospring.dtos.UserLoginDTO;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -77,11 +76,6 @@ public class User implements UserDetails {
 
     // Default constructor
     public User(){}
-
-    public User(UserLoginDTO user){
-        this.email = user.email();
-        this.username = user.password();
-    }
 
     // Constructor with args for creating users
     public User(String email, String username){
