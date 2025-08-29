@@ -84,9 +84,10 @@ public class User implements UserDetails {
     }
 
     // Constructor to create user with id (ONLY FOR TESTS)
-    protected User(UUID id, String email, String username) {
+    protected User(UUID id, String email, String username, String password) {
         this.id = id;
         this.email = email;
         this.username = username;
+        this.password = password;
     }
 }

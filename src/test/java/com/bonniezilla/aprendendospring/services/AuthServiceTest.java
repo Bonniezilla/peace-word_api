@@ -43,7 +43,7 @@ public class AuthServiceTest {
     void loginShouldReturnAuthResponseDTO() throws Exception {
         // Arrange
         AuthRequestDTO requestDTO = new AuthRequestDTO("test@user.com", "StrongPassword123@");
-        User mockUser = UserTestFactory.create(UUID.fromString("00000000-0000-0000-0000-000000000001"), "test@user.com", "user-test");
+        User mockUser = UserTestFactory.create(UUID.fromString("00000000-0000-0000-0000-000000000001"), "test@user.com", "user-test", "StrongPassword123@");
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(mockUser, null);
 

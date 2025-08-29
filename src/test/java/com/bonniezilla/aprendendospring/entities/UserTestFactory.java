@@ -8,7 +8,7 @@ public class UserTestFactory {
     private UserTestFactory() {}
 
     // Constructor to create user with id (ONLY FOR TESTS)
-    public static User create(UUID id, String email, String username) {
-        return new User(id, email, username);
+    public static User create(UUID id, String email, String username, String password) {
+        return new User(id, email, username, password);
     }
 }

@@ -1,7 +1,9 @@
 package com.bonniezilla.aprendendospring.services;
 
+import com.bonniezilla.aprendendospring.dtos.UserCreateDTO;
 import com.bonniezilla.aprendendospring.dtos.UserRegisterDTO;
 import com.bonniezilla.aprendendospring.entities.User;
+import com.bonniezilla.aprendendospring.entities.UserTestFactory;
 import com.bonniezilla.aprendendospring.exceptions.ResourceAlreadyExistsException;
 import com.bonniezilla.aprendendospring.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -35,16 +39,30 @@ class UserServiceTest {
         UserRegisterDTO dto = new UserRegisterDTO("username", "test@example", "Password1@");
         String encodedPassword = "encodedPassword";
 
+        User savedUser = UserTestFactory.create(
+                UUID.fromString("00000000-0000-0000-0000-000000000001"),
+                dto.username(),
+                dto.email(),
+                encodedPassword
+        );
+
         when(userRepository.existsByUsername(dto.username())).thenReturn(false);
         when(userRepository.existsByEmail(dto.email())).thenReturn(false);
         when(passwordEncoder.encode(dto.password())).thenReturn(encodedPassword);
-        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
+            User user = invocation.getArgument(0);
+            return UserTestFactory.create(
+                    UUID.fromString("00000000-0000-0000-0000-000000000001"),
+                    user.getUsername(),
+                    user.getEmail(),
+                    encodedPassword
+            );
+        });
 
-        User savedUser = userService.createUser(dto);
+        UserCreateDTO response = userService.createUser(dto);
 
-        assertEquals(dto.email(), savedUser.getEmail());
-        assertEquals(encodedPassword, savedUser.getPassword());
-        assertEquals(dto.username(), savedUser.getUsername());
+        assertEquals(UUID.fromString("00000000-0000-0000-0000-000000000001"), response.id());
+        assertEquals("User created succesfully!", response.message());
 
         verify(userRepository).save(any(User.class));
     }

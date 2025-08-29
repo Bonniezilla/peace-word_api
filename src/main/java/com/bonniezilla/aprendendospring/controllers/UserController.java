@@ -1,5 +1,6 @@
 package com.bonniezilla.aprendendospring.controllers;
 
+import com.bonniezilla.aprendendospring.dtos.UserCreateDTO;
 import com.bonniezilla.aprendendospring.dtos.UserRegisterDTO;
 import com.bonniezilla.aprendendospring.entities.User;
 
@@ -25,8 +26,8 @@ public class UserController {
 
     // Create user method
     @PostMapping("/create")
-    public ResponseEntity<User> saveUser(@RequestBody @Valid UserRegisterDTO userRegisterData) {
-        User savedUser = userService.createUser(userRegisterData);
+    public ResponseEntity<UserCreateDTO> saveUser(@RequestBody @Valid UserRegisterDTO userRegisterData) {
+        UserCreateDTO savedUser = userService.createUser(userRegisterData);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }

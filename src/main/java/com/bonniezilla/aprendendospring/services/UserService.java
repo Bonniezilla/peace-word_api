@@ -1,6 +1,7 @@
 package com.bonniezilla.aprendendospring.services;
 
 
+import com.bonniezilla.aprendendospring.dtos.UserCreateDTO;
 import com.bonniezilla.aprendendospring.dtos.UserRegisterDTO;
 import com.bonniezilla.aprendendospring.entities.Role;
 import com.bonniezilla.aprendendospring.entities.User;
@@ -25,7 +26,7 @@ public class UserService {
     }
 
     // Create user function
-    public User createUser(@Valid UserRegisterDTO data) {
+    public UserCreateDTO createUser(@Valid UserRegisterDTO data) {
         PasswordValidator.validatePassword(data.password());
 
         // Encoding raw password
@@ -46,7 +47,9 @@ public class UserService {
             throw new ResourceAlreadyExistsException("User with username " + data.username() + " already exists");
         }
 
-        return userRepository.save(user);
+        User userCreated = userRepository.save(user);
+
+        return new UserCreateDTO(userCreated.getId(), "User created succesfully!");
     }
 
 //    // Find all users function
