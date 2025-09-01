@@ -1,7 +1,9 @@
 package com.bonniezilla.aprendendospring.services;
 
-import com.bonniezilla.aprendendospring.dtos.UserCreateDTO;
+import com.bonniezilla.aprendendospring.dtos.UserCreatedDTO;
 import com.bonniezilla.aprendendospring.dtos.UserRegisterDTO;
+import com.bonniezilla.aprendendospring.dtos.UserUpdateDTO;
+import com.bonniezilla.aprendendospring.dtos.UserUpdatedDTO;
 import com.bonniezilla.aprendendospring.entities.User;
 import com.bonniezilla.aprendendospring.entities.UserTestFactory;
 import com.bonniezilla.aprendendospring.exceptions.ResourceAlreadyExistsException;
@@ -13,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,9 +31,14 @@ class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
+    private User user;
+
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this);
+
+        user = UserTestFactory.create(UUID.fromString("00000000-0000-0000-0000-000000000001"), "old@email.com", "old-user",  "encodedPassword");
+
     }
 
 
@@ -59,7 +67,7 @@ class UserServiceTest {
             );
         });
 
-        UserCreateDTO response = userService.createUser(dto);
+        UserCreatedDTO response = userService.createUser(dto);
 
         assertEquals(UUID.fromString("00000000-0000-0000-0000-000000000001"), response.id());
         assertEquals("User created succesfully!", response.message());
@@ -103,6 +111,28 @@ class UserServiceTest {
         assertEquals("User with username username already exists", existsException.getMessage());
 
         verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
+    void updateUserSuccessCase() {
+        // Arrange
+        UserUpdateDTO dto = new UserUpdateDTO("new-username", "new-test@example", "Password1@", "NewPassword1@");
+
+        String authenticatedEmail = "old@email.com";
+
+        when(userRepository.findByEmail(authenticatedEmail)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(dto.currentPassword(), user.getPassword())).thenReturn(true);
+        when(passwordEncoder.encode(dto.newPassword())).thenReturn("encodedPassword");
+        when(userRepository.save(any(User.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        UserUpdatedDTO response = userService.updateUser(dto, "old@email.com");
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(user.getId(), response.id());
+        assertEquals("User updated successfully!", response.message());
     }
 //        @Test
 //        void findAll() {
