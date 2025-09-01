@@ -90,6 +90,8 @@ public class UserService {
             dbUser.setUsername(data.newPassword());
         }
 
+        PasswordValidator.isStrongPassword(data.newPassword());
+
         if (data.newPassword() != null && !data.newPassword().isBlank()) {
             dbUser.setPassword(passwordEncoder.encode(data.newPassword()));
         }

@@ -3,10 +3,14 @@ package com.bonniezilla.aprendendospring.controllers;
 import com.bonniezilla.aprendendospring.dtos.UserCreatedDTO;
 import com.bonniezilla.aprendendospring.dtos.UserRegisterDTO;
 
+import com.bonniezilla.aprendendospring.dtos.UserUpdateDTO;
+import com.bonniezilla.aprendendospring.dtos.UserUpdatedDTO;
 import com.bonniezilla.aprendendospring.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
@@ -51,13 +55,13 @@ public class UserController {
 //        return ResponseEntity.ok(response);
 //    }
 //
-//    // Update one user by id method
-//    @PatchMapping(value = "/{id}")
-//    public ResponseEntity<UserRegisterDTO> updateUser(@PathVariable(value = "id") UUID id, @RequestBody UserLoginDTO userDTO) {
-//        UserRegisterDTO updatedUser = userService.updateUser(id, userDTO);
-//
-//        return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
-//    }
+    // Update one user by id method
+    @PatchMapping("/me")
+    public ResponseEntity<UserUpdatedDTO> updateUser(@RequestBody UserUpdateDTO userDTO, @AuthenticationPrincipal(expression = "username") String email) {
+        UserUpdatedDTO response = userService.updateUser(userDTO, email);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 //
 //    // Delete one user by id method
 //    @DeleteMapping(value = "/{id}")
