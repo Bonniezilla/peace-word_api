@@ -8,13 +8,14 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/users/{id}/passwords")
+@RequestMapping(value = "/users/me/passwords")
 public class PasswordController {
     @Autowired
     private PasswordRepository passwordRepository;
@@ -42,8 +43,12 @@ public class PasswordController {
 
 
     @GetMapping
-    public List<Password> findALl(@PathVariable(value = "id") UUID userId) {
-        List<Password> result = passwordRepository.findByUserId(userId);
+    public List<Password> getAllPasswords() {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found."));
+
+        List<Password> result = passwordRepository.findByUserId(user.getId());
 
         return result;
     }

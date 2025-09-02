@@ -5,6 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.security.KeyFactory;
@@ -86,7 +87,7 @@ public class JwtService {
         }
     }
 
-    public List getRolesFromToken(String token) throws Exception {
+    public List<String> getRolesFromToken(String token) throws Exception {
         loadKeys();
 
         Claims claims = Jwts.parserBuilder()
@@ -96,6 +97,18 @@ public class JwtService {
                 .getBody();
 
         return claims.get("roles", List.class);
+    }
+
+    public String getUsernameFromToken(String token) throws Exception {
+        loadKeys();
+
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(publicKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.getSubject();
     }
 
 }

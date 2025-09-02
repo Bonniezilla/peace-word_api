@@ -57,8 +57,8 @@ public class UserController {
 //
     // Update one user by id method
     @PatchMapping("/me")
-    public ResponseEntity<UserUpdatedDTO> updateUser(@RequestBody UserUpdateDTO userDTO, @AuthenticationPrincipal(expression = "username") String email) {
-        UserUpdatedDTO response = userService.updateUser(userDTO, email);
+    public ResponseEntity<UserUpdatedDTO> updateUser(@RequestBody UserUpdateDTO userDTO, @AuthenticationPrincipal String username) {
+        UserUpdatedDTO response = userService.updateUser(userDTO, username);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

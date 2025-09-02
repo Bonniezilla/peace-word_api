@@ -117,17 +117,16 @@ class UserServiceTest {
     void updateUserSuccessCase() {
         // Arrange
         UserUpdateDTO dto = new UserUpdateDTO("new-username", "new-test@example", "Password1@", "NewPassword1@");
+        String username = "old-user";
 
-        String authenticatedEmail = "old@email.com";
-
-        when(userRepository.findByEmail(authenticatedEmail)).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(dto.currentPassword(), user.getPassword())).thenReturn(true);
         when(passwordEncoder.encode(dto.newPassword())).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
-        UserUpdatedDTO response = userService.updateUser(dto, "old@email.com");
+        UserUpdatedDTO response = userService.updateUser(dto, username);
 
         // Assert
         assertNotNull(response);

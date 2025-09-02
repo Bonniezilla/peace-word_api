@@ -69,11 +69,11 @@ public class UserService {
     }
 //
     // Update user data
-    public UserUpdatedDTO updateUser(@Valid UserUpdateDTO data, String autheticatedEmail) {
-        User dbUser = userRepository.findByEmail(autheticatedEmail)
+    public UserUpdatedDTO updateUser(@Valid UserUpdateDTO data, String username) {
+        User dbUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not find"));
 
-        if (!dbUser.getEmail().equals(autheticatedEmail)){
+        if (!dbUser.getUsername().equals(username)){
             throw new RuntimeException("You cannot update other user!");
         }
 
