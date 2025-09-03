@@ -1,30 +1,30 @@
 package com.bonniezilla.aprendendospring.services;
 
 
-import com.bonniezilla.aprendendospring.dtos.UserCreatedDTO;
-import com.bonniezilla.aprendendospring.dtos.UserRegisterDTO;
-import com.bonniezilla.aprendendospring.dtos.UserUpdateDTO;
-import com.bonniezilla.aprendendospring.dtos.UserUpdatedDTO;
+import com.bonniezilla.aprendendospring.dtos.*;
 import com.bonniezilla.aprendendospring.entities.Role;
 import com.bonniezilla.aprendendospring.entities.User;
 import com.bonniezilla.aprendendospring.exceptions.ResourceAlreadyExistsException;
 import com.bonniezilla.aprendendospring.repositories.UserRepository;
 import com.bonniezilla.aprendendospring.utils.PasswordValidator;
+import io.jsonwebtoken.Jwt;
 import jakarta.validation.Valid;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
 public class UserService {
-    // Instancing userRepository
+    // Instantiating userRepository
     private final UserRepository userRepository;
 
     // Instantiating passwordEncoder
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, JwtService jwtService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -56,10 +56,12 @@ public class UserService {
         return new UserCreatedDTO(userCreated.getId(), "User created succesfully!");
     }
 
-//    // Find all users function
-//    public List<User> findAll() {
-//        return userRepository.findAll();
-//    }
+    // Find all users function
+    public List<UserDataDTO> findAll() {
+        return userRepository.findAll().stream()
+                .map(UserDataDTO::fromEntity)
+                .toList();
+    }
 //
     // Find a user by his id
     public User findByEmail(String email) {

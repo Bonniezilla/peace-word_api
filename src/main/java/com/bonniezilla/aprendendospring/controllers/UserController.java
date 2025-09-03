@@ -1,17 +1,19 @@
 package com.bonniezilla.aprendendospring.controllers;
 
-import com.bonniezilla.aprendendospring.dtos.UserCreatedDTO;
-import com.bonniezilla.aprendendospring.dtos.UserRegisterDTO;
+import com.bonniezilla.aprendendospring.dtos.*;
 
-import com.bonniezilla.aprendendospring.dtos.UserUpdateDTO;
-import com.bonniezilla.aprendendospring.dtos.UserUpdatedDTO;
+import com.bonniezilla.aprendendospring.entities.User;
+import com.bonniezilla.aprendendospring.services.JwtService;
 import com.bonniezilla.aprendendospring.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -26,6 +28,15 @@ public class UserController {
         this.userService = userService;
     }
 
+//    // Logic to check admin privileges
+//    private void checkAdmin(String token) {
+//        List<String> roles = jwtService.getRolesFromToken(token);
+//        System.out.println(roles);
+//        if (!roles.contains("ADMIN")) {
+//            throw new AccessDeniedException("You need to be admin to realize that operation!");
+//        }
+//    }
+
 
     // Create user method
     @PostMapping("/create")
@@ -35,13 +46,12 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
-//    // Get all users method
-//    @GetMapping
-//    public ResponseEntity<List<User>> findAll() {
-//        // Returning list of all users
-//
-//        return ResponseEntity.ok(userService.findAll());
-//    }
+    // Get all users methods
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<UserDataDTO>> findAll() {
+        return ResponseEntity.ok(userService.findAll());
+    }
 //
 //    // Get one user by id method
 //    @GetMapping(value = "/{id}")

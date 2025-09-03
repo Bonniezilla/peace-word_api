@@ -41,22 +41,26 @@ public class JwtService {
     private PrivateKey privateKey;
     private PublicKey publicKey;
 
-    private void loadKeys() throws Exception {
-        if (privateKey == null || publicKey == null) {
-        KeyFactory keyFactory = KeyFactory.getInstance("EC");
+    private void loadKeys() {
+        try {
+            if (privateKey == null || publicKey == null) {
+            KeyFactory keyFactory = KeyFactory.getInstance("EC");
 
-        byte[] privateBytes = Base64.getDecoder().decode(privateKeyBase64);
-        PKCS8EncodedKeySpec privateSpec = new PKCS8EncodedKeySpec(privateBytes);
-        privateKey = keyFactory.generatePrivate(privateSpec);
+            byte[] privateBytes = Base64.getDecoder().decode(privateKeyBase64);
+            PKCS8EncodedKeySpec privateSpec = new PKCS8EncodedKeySpec(privateBytes);
+            privateKey = keyFactory.generatePrivate(privateSpec);
 
-        byte[] publicBytes = Base64.getDecoder().decode(publicKeyBase64);
-        X509EncodedKeySpec publicSpec = new X509EncodedKeySpec(publicBytes);
-        publicKey = keyFactory.generatePublic(publicSpec);
+            byte[] publicBytes = Base64.getDecoder().decode(publicKeyBase64);
+            X509EncodedKeySpec publicSpec = new X509EncodedKeySpec(publicBytes);
+            publicKey = keyFactory.generatePublic(publicSpec);
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error loading jwt keys!", e);
         }
     }
 
     // Generate token JWT
-    public String generateToken(User user) throws Exception {
+    public String generateToken(User user) {
         loadKeys();
 
         var roles = user.getAuthorities()
@@ -73,7 +77,7 @@ public class JwtService {
                 .compact();
     }
 
-    public boolean validateToken(String token) throws Exception {
+    public boolean validateToken(String token) {
         loadKeys();
 
         try {
@@ -87,7 +91,7 @@ public class JwtService {
         }
     }
 
-    public List<String> getRolesFromToken(String token) throws Exception {
+    public List<String> getRolesFromToken(String token) {
         loadKeys();
 
         Claims claims = Jwts.parserBuilder()
@@ -99,7 +103,7 @@ public class JwtService {
         return claims.get("roles", List.class);
     }
 
-    public String getUsernameFromToken(String token) throws Exception {
+    public String getUsernameFromToken(String token) {
         loadKeys();
 
         Claims claims = Jwts.parserBuilder()

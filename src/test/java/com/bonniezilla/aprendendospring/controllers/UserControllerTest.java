@@ -2,15 +2,11 @@ package com.bonniezilla.aprendendospring.controllers;
 
 import com.bonniezilla.aprendendospring.dtos.UserCreatedDTO;
 import com.bonniezilla.aprendendospring.dtos.UserRegisterDTO;
-import com.bonniezilla.aprendendospring.dtos.UserUpdateDTO;
-import com.bonniezilla.aprendendospring.dtos.UserUpdatedDTO;
 import com.bonniezilla.aprendendospring.security.JwtAuthenticationFilter;
 import com.bonniezilla.aprendendospring.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -21,7 +17,6 @@ import org.springframework.test.web.servlet.RequestBuilder;
 
 import java.util.UUID;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
