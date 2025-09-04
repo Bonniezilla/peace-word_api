@@ -58,26 +58,4 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.id").value(response.id().toString()))
                 .andExpect(jsonPath("$.message").value(response.message()));
     }
-//
-//    @Test
-//    void updateUserSuccessCase() throws Exception {
-//        // Arrange
-//        UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000001");
-//        UserUpdateDTO data = new UserUpdateDTO("username", "test@email", "Password1@", "newPassword1@");
-//
-//        UserUpdatedDTO response = new UserUpdatedDTO(userId, "User updated successfully!");
-//
-//        Mockito.when(userService.updateUser(Mockito.any(UserUpdateDTO.class), Mockito.eq("old-user"))).thenReturn(response);
-//
-//        // Act + Assert
-//        mockMvc.perform(patch("/users/me")
-//                        .principal(() -> "old-user")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .accept(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(data)))
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(jsonPath("$.id").value(response.id().toString()))
-//                .andExpect(jsonPath("$.message").value(response.message()));
-//    }
 }

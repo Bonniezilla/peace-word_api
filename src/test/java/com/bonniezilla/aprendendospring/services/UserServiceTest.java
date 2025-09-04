@@ -1,9 +1,6 @@
 package com.bonniezilla.aprendendospring.services;
 
-import com.bonniezilla.aprendendospring.dtos.UserCreatedDTO;
-import com.bonniezilla.aprendendospring.dtos.UserRegisterDTO;
-import com.bonniezilla.aprendendospring.dtos.UserUpdateDTO;
-import com.bonniezilla.aprendendospring.dtos.UserUpdatedDTO;
+import com.bonniezilla.aprendendospring.dtos.*;
 import com.bonniezilla.aprendendospring.entities.User;
 import com.bonniezilla.aprendendospring.entities.UserTestFactory;
 import com.bonniezilla.aprendendospring.exceptions.ResourceAlreadyExistsException;
@@ -12,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -114,6 +112,22 @@ class UserServiceTest {
     }
 
     @Test
+    void getPersonalUserDataSuccessCase() {
+        // Arrange
+        String username = "old-user";
+
+        when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
+
+        // Act
+        UserDataDTO response = userService.getUserData(username);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals("old-user", response.username());
+        assertEquals("o**@*****.com", response.email());
+    }
+
+    @Test
     void updateUserSuccessCase() {
         // Arrange
         UserUpdateDTO dto = new UserUpdateDTO("new-username", "new-test@example", "Password1@", "NewPassword1@");
@@ -133,45 +147,23 @@ class UserServiceTest {
         assertEquals(user.getId(), response.id());
         assertEquals("User updated successfully!", response.message());
     }
-//        @Test
-//        void findAll() {
-//        }
-//
-//        @Test
-//        void findById() {
-//            User user = UserTestFactory.create(UUID.fromString("test"), "test@user.com", "UserTest");
-//
-//            when(userRepository.findById(UUID.fromString("test"))).thenReturn(Optional.of(user));
-//
-//            User response = userService.findById(UUID.fromString("test"));
-//
-//            assertEquals(user, response);
-//            assertEquals(user.getId(), response.getId());
-//            assertEquals(user.getEmail(), response.getEmail());
-//            assertEquals(user.getUsername(), response.getUsername());
-//
-//            Mockito.verify(userRepository).findById(UUID.fromString("test"));
-//        }
-//
-//        @Test
-//        void updateUser() {
-//            User user = UserTestFactory.create(UUID.fromString("test"), "test@user.com", "UserTest");
-//
-//            when(userRepository.findById(UUID.fromString("test"))).thenReturn(Optional.of(user));
-//
-//            when(userRepository.save(Mockito.any(User.class))).thenAnswer((invocation -> invocation.getArgument(0)));
-//
-//            UserLoginDTO requestDTO = new UserLoginDTO("test@updated.com", "Updated test");
-//
-//            UserRegisterDTO result = userService.updateUser(UUID.fromString("test"), requestDTO);
-//
-//            assertNotNull(result);
-//            assertEquals(999L, result.id());
-//            assertEquals(requestDTO.password(), result.username());
-//            assertEquals(requestDTO.email(), result.email());
-//
-//            Mockito.verify(userRepository).save(Mockito.any(User.class));
-//        }
+        @Test
+        void findAll() {
+        }
+
+        @Test
+        void findByIdSuccessCase() {
+            when(userRepository.findById(UUID.fromString("00000000-0000-0000-0000-000000000001"))).thenReturn(Optional.of(user));
+
+            UserCompleteDataDTO response = userService.findById(UUID.fromString("00000000-0000-0000-0000-000000000001"));
+
+            assertEquals(user.getId(), response.id());
+            assertEquals(user.getEmail(), response.email());
+            assertEquals(user.getUsername(), response.username());
+
+            Mockito.verify(userRepository).findById(UUID.fromString("00000000-0000-0000-0000-000000000001"));
+        }
+
 //
 //        @Test
 //        void deleteUser() {
