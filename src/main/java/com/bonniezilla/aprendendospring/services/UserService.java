@@ -62,14 +62,16 @@ public class UserService {
                 .map(UserDataDTO::fromEntity)
                 .toList();
     }
-//
+
     // Find a user by his id
-    public User findByEmail(String email) {
+    public UserDataDTO findById(UUID id) {
         // Return user or throw exception
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found by email!"));
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found by id!"));
+
+        return UserDataDTO.fromEntity(user);
     }
-//
+
     // Update user data
     public UserUpdatedDTO updateUser(@Valid UserUpdateDTO data, String username) {
         User dbUser = userRepository.findByUsername(username)

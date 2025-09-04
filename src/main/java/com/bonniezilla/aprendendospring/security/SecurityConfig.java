@@ -42,6 +42,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/auth/**", "/users/create", "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/users/me/**").hasRole("USER")
+                        // Paths only for admins
+                        .requestMatchers(HttpMethod.GET, "/users/{id:[0-9a-fA-F\\-]+}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

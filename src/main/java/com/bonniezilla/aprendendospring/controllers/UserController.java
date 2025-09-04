@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @CrossOrigin
 @RestController
@@ -52,19 +53,17 @@ public class UserController {
     public ResponseEntity<List<UserDataDTO>> findAll() {
         return ResponseEntity.ok(userService.findAll());
     }
-//
-//    // Get one user by id method
-//    @GetMapping(value = "/{id}")
-//    public ResponseEntity<UserRegisterDTO> findById(@PathVariable UUID id){
-//        // Returning one user
-//        User user = userService.findById(id);
-//
-//        // Instantiating UserResponseDTO
-//        UserRegisterDTO response = UserRegisterDTO.fromUser(user);
-//
-//        return ResponseEntity.ok(response);
-//    }
-//
+
+    // Get one user by id method
+    @GetMapping(value = "/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserDataDTO> findById(@PathVariable UUID id){
+        // Returning one user
+        UserDataDTO response = userService.findById(id);;
+
+        return ResponseEntity.ok(response);
+    }
+
     // Update one user by id method
     @PatchMapping("/me")
     public ResponseEntity<UserUpdatedDTO> updateUser(@RequestBody UserUpdateDTO userDTO, @AuthenticationPrincipal String username) {
