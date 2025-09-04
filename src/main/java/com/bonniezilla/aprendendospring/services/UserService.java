@@ -8,6 +8,7 @@ import com.bonniezilla.aprendendospring.exceptions.ResourceAlreadyExistsExceptio
 import com.bonniezilla.aprendendospring.repositories.UserRepository;
 import com.bonniezilla.aprendendospring.utils.PasswordValidator;
 import jakarta.validation.Valid;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -85,7 +86,7 @@ public class UserService {
     }
 
     // Update user data
-    public UserUpdatedDTO updateUser(@Valid UserUpdateDTO data, String username) {
+    public UserUpdatedDTO updateUser(@Valid UpdateUserDTO data, String username) {
         User dbUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not find!"));
 
@@ -117,12 +118,16 @@ public class UserService {
         return new UserUpdatedDTO(dbUser.getId(), "User updated successfully!");
     }
 
-//    // Delete user by id
-//    public User deleteUser(UUID id) {
-//        User dbUser = userRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//        userRepository.delete(dbUser);
-//
-//        return dbUser;
-//    }
+    // Delete user by his token
+    public UserDeletedDTO deleteUser(String username, String password) {
+        User dbUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        if (!passwordEncoder.matches(password, dbUser.getPassword())){
+            throw new BadCredentialsException("Incorrect password!");
+        }
+
+        userRepository.delete(dbUser);
+
+        return UserDeletedDTO.fromEntity(dbUser, "User deleted successfully!");
+    }
 }

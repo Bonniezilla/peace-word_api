@@ -130,7 +130,7 @@ class UserServiceTest {
     @Test
     void updateUserSuccessCase() {
         // Arrange
-        UserUpdateDTO dto = new UserUpdateDTO("new-username", "new-test@example", "Password1@", "NewPassword1@");
+        UpdateUserDTO dto = new UpdateUserDTO("new-username", "new-test@example", "Password1@", "NewPassword1@");
         String username = "old-user";
 
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));

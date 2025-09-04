@@ -3,12 +3,10 @@ package com.bonniezilla.aprendendospring.controllers;
 import com.bonniezilla.aprendendospring.dtos.*;
 
 import com.bonniezilla.aprendendospring.entities.User;
-import com.bonniezilla.aprendendospring.services.JwtService;
 import com.bonniezilla.aprendendospring.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -66,7 +64,7 @@ public class UserController {
 
     // Update one user by id method
     @PatchMapping("/me")
-    public ResponseEntity<UserUpdatedDTO> updateUser(@RequestBody UserUpdateDTO userDTO, @AuthenticationPrincipal String username) {
+    public ResponseEntity<UserUpdatedDTO> updateUser(@RequestBody UpdateUserDTO userDTO, @AuthenticationPrincipal String username) {
         UserUpdatedDTO response = userService.updateUser(userDTO, username);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -79,16 +77,14 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-//
-//    // Delete one user by id method
-//    @DeleteMapping(value = "/{id}")
-//    public ResponseEntity<Object> deleteUser(@PathVariable(value = "id") UUID id) {
-//        // Deleting and instantiating the deleted user
-//        User deletedUser = userService.deleteUser(id);
-//
-//        // Instantiating UserResponseDTO
-//        UserRegisterDTO response = UserRegisterDTO.fromUser(deletedUser);
-//
-//        return ResponseEntity.status(HttpStatus.OK).body("User " + response.username() + " deleted.");
-//    }
+
+    // Delete one user by his token
+    @DeleteMapping("/me")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<Object> deleteUser(@RequestBody DeleteUserDTO deleteUserDTO, @AuthenticationPrincipal String username) {
+        // Deleting and instantiating the deleted user
+        UserDeletedDTO response = userService.deleteUser(username, deleteUserDTO.password());
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }
