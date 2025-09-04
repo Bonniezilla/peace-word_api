@@ -68,6 +68,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(errorResponseDTO.status()).body(errorResponseDTO);
     }
 
+    // Return 403 Forbidden with an exception message
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponseDTO> handleAccessDeniedException(AccessDeniedException ex, HttpServletRequest request) {
         ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(

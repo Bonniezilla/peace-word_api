@@ -7,9 +7,8 @@ import com.bonniezilla.aprendendospring.entities.User;
 import com.bonniezilla.aprendendospring.exceptions.ResourceAlreadyExistsException;
 import com.bonniezilla.aprendendospring.repositories.UserRepository;
 import com.bonniezilla.aprendendospring.utils.PasswordValidator;
-import io.jsonwebtoken.Jwt;
 import jakarta.validation.Valid;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +23,13 @@ public class UserService {
     // Instantiating passwordEncoder
     private final PasswordEncoder passwordEncoder;
 
+    // Instantiating jwtService
+    private final JwtService jwtService;
+
     public UserService(UserRepository userRepository, JwtService jwtService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     // Create user function
@@ -56,18 +59,27 @@ public class UserService {
         return new UserCreatedDTO(userCreated.getId(), "User created succesfully!");
     }
 
-    // Find all users function
-    public List<UserDataDTO> findAll() {
+    // Find all users functions (ONLY FOR ADMINS)
+    public List<UserCompleteDataDTO> findAll() {
         return userRepository.findAll().stream()
-                .map(UserDataDTO::fromEntity)
+                .map(UserCompleteDataDTO::fromEntity)
                 .toList();
     }
 
-    // Find a user by his id
-    public UserDataDTO findById(UUID id) {
+    // Find a user by his id (ONLY FOR ADMINS)
+    public UserCompleteDataDTO findById(UUID id) {
         // Return user or throw exception
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found by id!"));
+
+        return UserCompleteDataDTO.fromEntity(user);
+    }
+
+    // Get user data by his token
+    public UserDataDTO getUserData(String username) {
+        // Return user or throw exception
+        User user  = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not find!"));
 
         return UserDataDTO.fromEntity(user);
     }
@@ -75,7 +87,7 @@ public class UserService {
     // Update user data
     public UserUpdatedDTO updateUser(@Valid UserUpdateDTO data, String username) {
         User dbUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not find"));
+                .orElseThrow(() -> new RuntimeException("User not find!"));
 
         if (!dbUser.getUsername().equals(username)){
             throw new RuntimeException("You cannot update other user!");

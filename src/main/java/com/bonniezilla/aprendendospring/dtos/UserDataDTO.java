@@ -1,23 +1,16 @@
 package com.bonniezilla.aprendendospring.dtos;
 
 import com.bonniezilla.aprendendospring.entities.User;
+import com.bonniezilla.aprendendospring.utils.EmailMaskUtil;
 
-import java.util.List;
-import java.util.UUID;
-
-public record UserDataDTO (UUID id, String email, String username, boolean enabled, List<AuthorityDTO> authorities, boolean accountNonExpired, boolean accountNonLocked, boolean credentialsNonExpired){
+public record UserDataDTO(String username, String email) {
     public static UserDataDTO fromEntity(User user) {
-        return new UserDataDTO(
-            user.getId(),
-            user.getEmail(),
-            user.getUsername(),
-            user.isEnabled(),
-            user.getAuthorities().stream()
-                    .map(auth -> new AuthorityDTO(auth.getAuthority()))
-                    .toList(),
-            user.isAccountNonExpired(),
-            user.isAccountNonLocked(),
-            user.isCredentialsNonExpired()
+        // Mask user email for security
+        String maskedEmail = EmailMaskUtil.maskEmail(user.getEmail());
+
+        return new UserDataDTO (
+                user.getUsername(),
+                maskedEmail
         );
     }
 }

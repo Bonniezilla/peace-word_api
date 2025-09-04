@@ -50,16 +50,16 @@ public class UserController {
     // Get all users methods
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<UserDataDTO>> findAll() {
+    public ResponseEntity<List<UserCompleteDataDTO>> findAll() {
         return ResponseEntity.ok(userService.findAll());
     }
 
     // Get one user by id method
     @GetMapping(value = "/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserDataDTO> findById(@PathVariable UUID id){
+    public ResponseEntity<UserCompleteDataDTO> findById(@PathVariable UUID id){
         // Returning one user
-        UserDataDTO response = userService.findById(id);;
+        UserCompleteDataDTO response = userService.findById(id);;
 
         return ResponseEntity.ok(response);
     }
@@ -68,6 +68,14 @@ public class UserController {
     @PatchMapping("/me")
     public ResponseEntity<UserUpdatedDTO> updateUser(@RequestBody UserUpdateDTO userDTO, @AuthenticationPrincipal String username) {
         UserUpdatedDTO response = userService.updateUser(userDTO, username);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/me")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<UserDataDTO> getUserData(@AuthenticationPrincipal String username) {
+        UserDataDTO response = userService.getUserData(username);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
