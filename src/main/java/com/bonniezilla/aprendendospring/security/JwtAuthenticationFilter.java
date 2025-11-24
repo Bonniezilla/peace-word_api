@@ -34,6 +34,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         System.out.println("Path: " + request.getServletPath());
         System.out.println("Authorization header: " + request.getHeader("Authorization"));
 
+        // Ignores preflight cors
+        if (request.getMethod().equalsIgnoreCase("OPTIONS")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+
         String token = recoverToken(request);
 
         try {
